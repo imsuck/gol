@@ -97,6 +97,8 @@ impl Game {
         self.board = new_board.board;
     }
 
+    /// *Debug only*
+    ///
     /// Flips the cell in the specified position
     /// # Panics
     /// This method will panic when the position specified is not in the board
