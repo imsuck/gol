@@ -32,11 +32,14 @@ pub struct Game {
 
 impl fmt::Display for Game {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        for row in &self.board {
+        for (i, row) in self.board.iter().enumerate() {
             for cell in row {
                 write!(f, "{}", cell)?;
             }
-            write!(f, "\r\n")?;
+            write!(f, "\r")?;
+            if i != self.board.len() - 1 {
+                write!(f, "\n")?;
+            }
         }
 
         Ok(())
