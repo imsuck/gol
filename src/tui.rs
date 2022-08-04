@@ -26,6 +26,10 @@ pub fn start(width: usize, height: usize, density: f64, fps: u64) -> crossterm::
     crossterm::terminal::enable_raw_mode()?;
     let mut game = Game::new_rand(width, height, density);
 
+    execute!(stdout(), MoveTo(0, 0)).ok();
+    print!("{game}");
+    thread::sleep(Duration::from_millis(1000 / fps));
+
     'out: loop {
         execute!(stdout(), MoveTo(0, 0)).ok();
         game.update_board();
