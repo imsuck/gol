@@ -37,7 +37,11 @@ pub fn start(width: usize, height: usize, density: f64, fps: u64) -> crossterm::
 
         match handle_keypresses() {
             Action::None => (),
-            Action::Restart => game = Game::new_rand(width, height, density),
+            Action::Restart => {
+                game = Game::new_rand(width, height, density);
+                execute!(stdout(), MoveTo(0, 0)).ok();
+                print!("{game}");
+            }
             Action::Pause => loop {
                 if let Some(Event::Key(key)) = event::read().ok() {
                     match key.code {
