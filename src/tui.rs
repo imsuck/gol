@@ -43,7 +43,7 @@ pub fn start(width: usize, height: usize, density: f64, fps: u64) -> crossterm::
                 print!("{game}");
             }
             Action::Pause => loop {
-                if let Some(Event::Key(key)) = event::read().ok() {
+                if let Ok(Event::Key(key)) = event::read() {
                     match key.code {
                         KeyCode::Char('n') => {
                             execute!(stdout(), MoveTo(0, 0)).ok();
@@ -66,7 +66,7 @@ pub fn start(width: usize, height: usize, density: f64, fps: u64) -> crossterm::
 
 fn handle_keypresses() -> Action {
     if event::poll(Duration::from_secs(0)).ok().unwrap_or(false) {
-        if let Some(Event::Key(key)) = event::read().ok() {
+        if let Ok(Event::Key(key)) = event::read() {
             match (key.modifiers, key.code) {
                 // Restart
                 (_, KeyCode::Char('r')) => Action::Restart,

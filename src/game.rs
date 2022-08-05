@@ -38,7 +38,7 @@ impl fmt::Display for Game {
             }
             write!(f, "\r")?;
             if i != self.board.len() - 1 {
-                write!(f, "\n")?;
+                writeln!(f)?;
             }
         }
 
