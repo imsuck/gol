@@ -19,12 +19,12 @@ enum Action {
 }
 
 /// Start `GoL` tui
-pub fn start(width: usize, height: usize, density: f64, fps: u64) -> crossterm::Result<()> {
+pub fn start(width: u32, height: u32, density: f64, fps: u64) -> crossterm::Result<()> {
     let _clean_up = CleanUp;
 
     execute!(stdout(), EnterAlternateScreen, Hide)?;
     crossterm::terminal::enable_raw_mode()?;
-    let mut game = Game::new_rand(width, height, density);
+    let mut game = Game::new(width, height, density);
 
     execute!(stdout(), MoveTo(0, 0)).ok();
     print!("{game}");
@@ -32,13 +32,13 @@ pub fn start(width: usize, height: usize, density: f64, fps: u64) -> crossterm::
 
     'out: loop {
         execute!(stdout(), MoveTo(0, 0)).ok();
-        game.update_board();
+        game.tick();
         print!("{game}");
 
         match handle_keypresses() {
             Action::None => (),
             Action::Restart => {
-                game = Game::new_rand(width, height, density);
+                game = Game::new(width, height, density);
                 execute!(stdout(), MoveTo(0, 0)).ok();
                 print!("{game}");
             }
@@ -47,7 +47,7 @@ pub fn start(width: usize, height: usize, density: f64, fps: u64) -> crossterm::
                     match key.code {
                         KeyCode::Char('n') => {
                             execute!(stdout(), MoveTo(0, 0)).ok();
-                            game.update_board();
+                            game.tick();
                             print!("{game}");
                         }
                         KeyCode::Char('q') => break 'out,

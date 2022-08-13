@@ -26,11 +26,11 @@ fn main() {
 struct Args {
     /// Board width
     #[clap(short = 'w', long = "width", default_value = "20")]
-    width: usize,
+    width: u32,
     /// Board height
     #[clap(short = 'h', long = "height", default_value = "15")]
-    height: usize,
-    /// Percentage of initial alive cells
+    height: u32,
+    /// Percentage of initial live cells
     #[clap(short = 'd', long = "density", default_value = "0.3")]
     density: f64,
     #[clap(long = "fps", default_value = "30")]
