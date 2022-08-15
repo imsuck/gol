@@ -4,5 +4,6 @@
 
 pub mod game;
 pub mod tui;
+pub mod window;
 
 use game::Game;

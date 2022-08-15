@@ -19,7 +19,7 @@ enum Action {
 }
 
 /// Start `GoL` tui
-pub fn start(width: u32, height: u32, density: f64, fps: u64) -> crossterm::Result<()> {
+pub fn run(width: u32, height: u32, density: f64, fps: u32) -> crossterm::Result<()> {
     let _clean_up = CleanUp;
 
     execute!(stdout(), EnterAlternateScreen, Hide)?;
@@ -28,7 +28,7 @@ pub fn start(width: u32, height: u32, density: f64, fps: u64) -> crossterm::Resu
 
     execute!(stdout(), MoveTo(0, 0)).ok();
     print!("{game}");
-    thread::sleep(Duration::from_millis(1000 / fps));
+    thread::sleep(Duration::from_micros(1_000_000 / (fps as u64 * 1_000)));
 
     'out: loop {
         execute!(stdout(), MoveTo(0, 0)).ok();
@@ -58,7 +58,7 @@ pub fn start(width: u32, height: u32, density: f64, fps: u64) -> crossterm::Resu
             Action::Quit => break,
         }
 
-        thread::sleep(Duration::from_millis(1000 / fps));
+        thread::sleep(Duration::from_micros(1_000_000 / (fps as u64 * 1_000)));
     }
 
     Ok(())

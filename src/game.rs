@@ -1,4 +1,4 @@
-//! Game elements
+//! Game logic
 
 use fixedbitset::FixedBitSet;
 use rand::{thread_rng, Rng};
