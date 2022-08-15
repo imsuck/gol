@@ -28,7 +28,7 @@ pub fn run(width: u32, height: u32, density: f64, fps: u32) -> crossterm::Result
 
     execute!(stdout(), MoveTo(0, 0)).ok();
     print!("{game}");
-    thread::sleep(Duration::from_micros(1_000_000 / (fps as u64 * 1_000)));
+    thread::sleep(Duration::from_micros(1_000_000 / fps as u64));
 
     'out: loop {
         execute!(stdout(), MoveTo(0, 0)).ok();
@@ -58,7 +58,7 @@ pub fn run(width: u32, height: u32, density: f64, fps: u32) -> crossterm::Result
             Action::Quit => break,
         }
 
-        thread::sleep(Duration::from_micros(1_000_000 / (fps as u64 * 1_000)));
+        thread::sleep(Duration::from_micros(1_000_000 / fps as u64));
     }
 
     Ok(())
