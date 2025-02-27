@@ -10,6 +10,7 @@ use std::fmt;
 pub struct Game {
     // Row<Column<Cell>>
     board: FixedBitSet,
+    buf: FixedBitSet,
     width: u32,
     height: u32,
 }
@@ -29,10 +30,7 @@ impl fmt::Display for Game {
                 write!(f, "{}", symbol)?;
             }
 
-            write!(f, "\r")?;
-            if row != self.height - 1 {
-                writeln!(f)?;
-            }
+            writeln!(f, "\r")?;
         }
 
         Ok(())
@@ -46,6 +44,7 @@ impl Game {
         let size = (width * height) as usize;
 
         let mut board = FixedBitSet::with_capacity(size);
+        let buf = FixedBitSet::with_capacity(size);
 
         for i in 0..size {
             board.set(i, thread_rng().gen_bool(density));
@@ -53,6 +52,7 @@ impl Game {
 
         Self {
             board,
+            buf,
             width,
             height,
         }
@@ -64,33 +64,31 @@ impl Game {
     ///
     /// - Any dead cells with exactly 3 live neighbours comes to life.
     pub fn tick(&mut self) {
-        let mut next = self.board.clone();
-
         for row in 0..self.height {
             for col in 0..self.width {
                 let index = self.get_index(row, col);
                 let cell = self.board.contains(index);
                 let live_neighbour_count = self.live_neighbour_count(row, col);
 
-                next.set(
+                self.buf.set(
                     index,
                     match (cell, live_neighbour_count) {
                         (_, x) if !(2..=3).contains(&x) => false,
                         (_, 3) => true,
-                        (otherwise, _) => otherwise,
+                        (state, _) => state,
                     },
                 );
             }
         }
 
-        self.board = next;
+        std::mem::swap(&mut self.board, &mut self.buf);
     }
 
     fn live_neighbour_count(&self, row: u32, column: u32) -> u8 {
         let mut count = 0;
 
-        for delta_row in [self.height - 1, 0, 1].iter().cloned() {
-            for delta_col in [self.width - 1, 0, 1].iter().cloned() {
+        for &delta_row in &[self.height - 1, 0, 1] {
+            for &delta_col in &[self.width - 1, 0, 1] {
                 if delta_col == 0 && delta_row == 0 {
                     continue;
                 }

@@ -26,29 +26,25 @@ pub fn run(width: u32, height: u32, density: f64, fps: u32) -> crossterm::Result
     crossterm::terminal::enable_raw_mode()?;
     let mut game = Game::new(width, height, density);
 
-    execute!(stdout(), MoveTo(0, 0)).ok();
-    print!("{game}");
+    draw(&game);
     thread::sleep(Duration::from_micros(1_000_000 / fps as u64));
 
     'out: loop {
-        execute!(stdout(), MoveTo(0, 0)).ok();
         game.tick();
-        print!("{game}");
+        draw(&game);
 
         match handle_keypresses() {
             Action::None => (),
             Action::Restart => {
                 game = Game::new(width, height, density);
-                execute!(stdout(), MoveTo(0, 0)).ok();
-                print!("{game}");
+                draw(&game);
             }
             Action::Pause => loop {
                 if let Ok(Event::Key(key)) = event::read() {
                     match key.code {
                         KeyCode::Char('n') => {
-                            execute!(stdout(), MoveTo(0, 0)).ok();
                             game.tick();
-                            print!("{game}");
+                            draw(&game);
                         }
                         KeyCode::Char('q') => break 'out,
                         _ => break,
@@ -83,6 +79,11 @@ fn handle_keypresses() -> Action {
     } else {
         Action::None
     }
+}
+
+fn draw(game: &Game) {
+    execute!(stdout(), MoveTo(0, 0)).ok();
+    print!("{game}");
 }
 
 struct CleanUp;
